@@ -56,13 +56,13 @@ interface AnalysisResults {
 	participant_count_estimate?: number
 }
 
-interface ApiResponse {
-	success: boolean
-	message: string
-	filename: string
-	results_file: string
-	results: AnalysisResults
-}
+// interface ApiResponse {
+// 	success: boolean
+// 	message: string
+// 	filename: string
+// 	results_file: string
+// 	results: AnalysisResults
+// }
 
 const API_BASE_URL = 'http://localhost:8000'
 
