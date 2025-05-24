@@ -48,23 +48,62 @@ class AnalysisWorker:
     
     async def analyze_content(self, transcription: str) -> Dict[str, Any]:
         return {
-            "topics": [{"topic": "Обсуждение проекта", "summary": "Обсуждали задачи и сроки"}],
-            "decisions": [{"decision": "Запустить MVP", "context": "Обсуждение с командой", "impact": "Быстрый выход на рынок"}],
-            "meeting_type": "planning",
-            "effectiveness_score": 8
+            "topics": [
+                {"topic": "UI Design Review", "summary": "Обсуждение финальных правок UI", "duration_estimate": "15 мин"},
+                {"topic": "API Development", "summary": "Прогресс по интеграции API", "duration_estimate": "12 мин"},
+                {"topic": "Testing Strategy", "summary": "План тестирования", "duration_estimate": "10 мин"},
+                {"topic": "Release Planning", "summary": "Планирование релиза", "duration_estimate": "8 мин"}
+            ],
+            "decisions": [
+                {"decision": "Финализировать UI до 20 июня", "context": "Обсуждение с командой", "impact": "Своевременный релиз"},
+                {"decision": "Провести интеграционное тестирование", "context": "API интеграция", "impact": "Повышение качества"}
+            ],
+            "meeting_type": "weekly_sync",
+            "effectiveness_score": 7.5
         }
 
-    async def extract_tasks(self, transcription: str) -> List[Dict[str, Any]]:
+    async def extract_tasks(self, content: str) -> List[Dict]:
+        """Извлекает задачи из контента"""
+        # MOCK: Возвращаем тестовые задачи
         return [
-            {"description": "Подготовить презентацию", "assignee": "Иван", "deadline": "2024-05-30", "priority": "high"}
+            {
+                "id": "1",
+                "task": "Подготовить презентацию по результатам исследования",
+                "assignee": "Sarah Johnson",
+                "deadline": "2025-06-20",
+                "priority": "high",
+                "status": "pending",
+                "context": "Важно для следующего этапа проекта"
+            },
+            {
+                "id": "2",
+                "task": "Провести тестирование новой функциональности",
+                "assignee": "Michael Wong",
+                "deadline": "2025-06-22",
+                "priority": "medium",
+                "status": "pending",
+                "context": "Необходимо для релиза"
+            },
+            {
+                "id": "3",
+                "task": "Обновить документацию API",
+                "assignee": "Alex Chen",
+                "deadline": "2025-06-25",
+                "priority": "high",
+                "status": "pending",
+                "context": "Критично для разработчиков"
+            }
         ]
 
     async def generate_insights(self, transcription: str) -> Dict[str, Any]:
         return {
-            "team_dynamics": "Команда работает слаженно",
-            "process_recommendations": ["Проводить встречи раз в неделю"],
-            "risk_flags": ["Возможна задержка по срокам"],
-            "follow_up_suggestions": ["Проверить статус задач через 3 дня"]
+            "team_dynamics": "Команда работает слаженно, коммуникация эффективна.",
+            "process_recommendations": ["Проводить встречи раз в неделю", "Добавить больше времени на обсуждение тестирования"],
+            "risk_flags": [
+                "Potential delay in the API integration due to third-party service issues",
+                "Limited testing resources might affect quality assurance"
+            ],
+            "follow_up_suggestions": ["Проверить статус задач через 3 дня", "Подготовить отчет для стейкхолдеров"]
         }
 
     async def analyze(self, transcription: str) -> Dict[str, Any]:
