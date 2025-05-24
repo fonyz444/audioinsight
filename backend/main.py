@@ -279,17 +279,14 @@ async def get_demo_files():
 @app.post("/api/demo/{demo_id}/analyze")
 async def analyze_demo_file(demo_id: str):
     logger.info(f"🎬 Demo request: {demo_id}")
-    
     try:
-        if demo_id != "standup":
+        # Универсальная поддержка demo_id с префиксом demo_ и без
+        normalized_id = demo_id.replace("demo_", "")
+        if not normalized_id:
             raise HTTPException(400, f"Invalid demo ID: {demo_id}")
-        
-        meeting_id = f"demo_{demo_id}_{uuid.uuid4().hex[:8]}"
-        filename = f"{demo_id}.mp3"
-        
+        meeting_id = f"demo_{normalized_id}_{uuid.uuid4().hex[:8]}"
+        filename = f"{normalized_id}.mp3"
         logger.info(f"🆔 Demo meeting ID: {meeting_id}")
-        
-        # Initialize status
         processing_status[meeting_id] = {
             "status": "processing",
             "filename": filename,
@@ -297,16 +294,12 @@ async def analyze_demo_file(demo_id: str):
             "progress": 0,
             "current_step": "Initializing demo"
         }
-        
-        # Start demo processing
-        asyncio.create_task(process_demo_safe(meeting_id, demo_id))
-        
+        asyncio.create_task(process_demo_safe(meeting_id, normalized_id))
         return JSONResponse({
             "id": meeting_id,
             "filename": filename,
             "status": "processing"
         })
-    
     except Exception as e:
         logger.error(f"💥 Demo error: {str(e)}")
         logger.error(f"💥 Demo traceback: {traceback.format_exc()}")

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Target, Clock, Users } from 'lucide-react'
 
 interface EffectivenessCardProps {

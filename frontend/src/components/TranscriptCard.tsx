@@ -1,4 +1,3 @@
-import React from 'react'
 import { FileText, Copy } from 'lucide-react'
 
 interface TranscriptCardProps {

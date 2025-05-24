@@ -4,15 +4,7 @@ import {
 	Upload,
 	FileAudio,
 	Loader2,
-	CheckCircle,
-	Download,
-	Copy,
-	Clock,
-	Users,
 	Target,
-	Lightbulb,
-	AlertTriangle,
-	FileText,
 	Play,
 	Pause,
 } from 'lucide-react'
@@ -461,26 +453,6 @@ function App() {
 			})
 	}
 
-	const downloadJSON = () => {
-		if (!results) return
-
-		const dataStr = JSON.stringify(results, null, 2)
-		const dataBlob = new Blob([dataStr], { type: 'application/json' })
-		const url = URL.createObjectURL(dataBlob)
-
-		const link = document.createElement('a')
-		link.href = url
-		link.download = `meeting-analysis-${
-			new Date().toISOString().split('T')[0]
-		}.json`
-		document.body.appendChild(link)
-		link.click()
-		document.body.removeChild(link)
-		URL.revokeObjectURL(url)
-
-		toast.success('JSON файл загружен')
-	}
-
 	const downloadTextReport = () => {
 		if (!results) return
 
@@ -565,14 +537,6 @@ function App() {
 			audioRef.current.play()
 		}
 		setIsPlaying(!isPlaying)
-	}
-
-	const formatScore = (score: number) => {
-		if (score >= 8) return { text: 'Отлично', color: 'text-green-600' }
-		if (score >= 6) return { text: 'Хорошо', color: 'text-blue-600' }
-		if (score >= 4)
-			return { text: 'Удовлетворительно', color: 'text-yellow-600' }
-		return { text: 'Требует улучшения', color: 'text-red-600' }
 	}
 
 	return (
