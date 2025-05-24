@@ -1,0 +1,15 @@
+{
+  "id": "b041a125-6b55-465d-a47e-73108fd7f1f9",
+  "filename": "real_speech.mp3",
+  "status": "completed",
+  "analysis_timestamp": "2025-05-24T18:58:15.041071",
+  "transcription": "This is a fallback transcription. The uploaded audio file would be transcribed here using Google Cloud Speech-to-Text API in production.",
+  "tasks": [],
+  "decisions": [],
+  "topics": [],
+  "insights": [],
+  "effectiveness_score": 5.0,
+  "risks": [],
+  "meeting_duration_estimate": 300,
+  "participant_count_estimate": 0
+}

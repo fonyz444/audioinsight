@@ -1,0 +1,29 @@
+{
+  "id": "0c2b932a-8c06-4cd9-84bc-caebce235760",
+  "filename": "audio-DBOOK-A1-01.mp3",
+  "status": "completed",
+  "analysis_timestamp": "2025-05-24T19:22:36.327102",
+  "transcription": "",
+  "tasks": [],
+  "decisions": [],
+  "topics": [],
+  "insights": {
+    "teamDynamics": "",
+    "processRecommendations": [],
+    "riskFlags": [
+      "Ошибка анализа"
+    ],
+    "followUpSuggestions": []
+  },
+  "effectiveness_score": 0.0,
+  "risks": [],
+  "meeting_duration_estimate": 300,
+  "participant_count_estimate": 1,
+  "content": {
+    "topics": [],
+    "decisions": [],
+    "meetingType": "error",
+    "effectivenessScore": 0
+  },
+  "actionItems": []
+}

@@ -1,0 +1,29 @@
+{
+  "id": "26f8d612-6376-4e27-b156-7d2313b90019",
+  "filename": "audio-DBOOK-A1-01.mp3",
+  "status": "completed",
+  "analysis_timestamp": "2025-05-24T19:19:59.027214",
+  "transcription": "This is a fallback transcription. The uploaded audio file would be transcribed here using Google Cloud Speech-to-Text API in production.",
+  "tasks": [],
+  "decisions": [],
+  "topics": [],
+  "insights": {
+    "teamDynamics": "",
+    "processRecommendations": [],
+    "riskFlags": [
+      "Ошибка анализа"
+    ],
+    "followUpSuggestions": []
+  },
+  "effectiveness_score": 0.0,
+  "risks": [],
+  "meeting_duration_estimate": 300,
+  "participant_count_estimate": 2,
+  "content": {
+    "topics": [],
+    "decisions": [],
+    "meetingType": "error",
+    "effectivenessScore": 0
+  },
+  "actionItems": []
+}

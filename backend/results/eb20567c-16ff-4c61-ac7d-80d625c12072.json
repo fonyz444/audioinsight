@@ -1,0 +1,29 @@
+{
+  "id": "eb20567c-16ff-4c61-ac7d-80d625c12072",
+  "filename": "vashington-d_s_-iz-ameriki.mp3",
+  "status": "completed",
+  "analysis_timestamp": "2025-05-24T19:12:18.326464",
+  "transcription": "This is a fallback transcription. The uploaded audio file would be transcribed here using Google Cloud Speech-to-Text API in production.",
+  "tasks": [],
+  "decisions": [],
+  "topics": [],
+  "insights": {
+    "teamDynamics": "",
+    "processRecommendations": [],
+    "riskFlags": [
+      "Ошибка анализа"
+    ],
+    "followUpSuggestions": []
+  },
+  "effectiveness_score": 0.0,
+  "risks": [],
+  "meeting_duration_estimate": 300,
+  "participant_count_estimate": 2,
+  "content": {
+    "topics": [],
+    "decisions": [],
+    "meetingType": "error",
+    "effectivenessScore": 0
+  },
+  "actionItems": []
+}

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "audioinsight1",
+  "private_key_id": "d05576dea1ba21d4fb5cf56b4acd49330506ae29",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCxAgi7qFvUbFw6\nXXPai/DuI8hJFn4LJY94ydqz4z+FNolQW4e762gkP2d6tvmgsGN1EydnWT9Z9/Jg\nXV6EBATqnkmxGptxozDliJtC6jdiz5pxeSxx40lhMmaCfZnVPt3rG3l8GUpsxVgf\nDqNAq1W0IRLmCpOwWCgD4z4/DKrnrCeMhhPwNIYpaTZ3NQTITK+GdO/r7MQr8hUm\n9oVBhVqmIOy1c9CcV2ySffyi/nrfxeyJCZszC2u7LTTVJsGLeysUK2J66l2AXui0\nVY0l2cf+LnS4LE4BiIvVUjxs0vliAJwc1pMWfY8KMh0pmEMatORVVJFSgMzbJorC\nab/bU+HtAgMBAAECggEANFiKppxaU86b07LRUR8zZ+lzEJIzQi6gaDMhlzMsFMQV\nBYub72nliVqqynKUDf4722KHs5uEDaIyrmbOTbI2lf+rgVGCCLAfBLJKYBaNvI3y\neX5BM4joqXLTN+HW/WYzEJU2bwm3pcUSk1Sr2LMSjEt/oEIefPcFFmk8fj7Lx+j1\njKSwYvuYlVOC/yIINYblJvmVpTWWMB7K2hgzfTNUSJhj+Z1sSAxvBiy1e1PUNaXs\ndi4w88dagiNx0qOpn71NUotRxkCq6IVC+UBWMBzx5HQ/Wj6w8UbfLnOa3cAA6mZD\nde0efMV3s3LjHurGDhIiI+JJp1cBT65A2Hq3Uw+qbQKBgQDwiP4o6ViH1MLslt5r\nsC3n/eaQQVV5T6NPTbZSRbxFr+HoLWbyPPamXUu/LriAEGdTvK2mBPLFXj6BwsNj\nSngfz47UsLUmp2AkpkA6yKRfIb5DR1zbR6JbuQl5jTkEcnvKglJ2t0vQTVvYS/gM\njafKmz7XvooFCwP3F1n4VWMMVwKBgQC8Y2/dS0E7RvNluaY3WtYpX3DKfR+JPIi/\nJzwi5zIBnKsVrSlqDK5w7HV22JO03PJIfMEYilsWHcS8UR+ko26F93oPuwnO1sYb\nUaEJ68hlr4omp+CXOPhsWgMHF58m+n4z95Pj0Ct9tjYrsTt/CwIHWmvF8kQmLlHU\nvQSpACYZWwKBgQC2EJuA0A9o0QyyFAhLLtGwliic7DcMWdFdR49Heu1lOhoeqa8Q\nkECJ8HhTP8P7e28anOg7j+dKqWlawtcuIsIGIg8UwqR7m5lUZFqdpB12vI3NUwjg\nGbq0/rxDOzf7O8Sjpj1RCrDh/IwWjno01kw5OYU5vEmwQ4Q+1XgOVmNghQKBgAjQ\nNhmKPcECLrzhlI8eZsqEtogilmkbNeKLeVrAqiw9IhvfgAKAGWEbDtvCghaCB6uw\nenAleOFt/xg4S1yucKs/yqwVuf29OoNorDoEl9l5/uKUFAO/HJAlHeMlDcMLEQBp\nYrfTs1UsQxiEMB5fa3bgmg4mqV2H6Tgkp6UoZp/lAoGAWkNRzuVaoNASpt0PtfGD\nB5NVSr+lXEVIWagd7//PdAA4FkeBnYm5LRUQVwYP5ddTWVePMtXFlCepZwlrMFXd\ndpLsNELOSmQwsmQOzvWcTJ2ExqXrmMvBX2VeH/F4RYissuFlWOLm9kKTlf+wjArm\nK6QSAI4NuwiIE4OtfpLHgc4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "speech-service@audioinsight1.iam.gserviceaccount.com",
+  "client_id": "105320021377986247948",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/speech-service%40audioinsight1.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
