@@ -20,3 +20,9 @@ build/
 backend/audioinsight-*.json
 backend/results/
 backend/temp_uploads/
+
+# Секреты и временные файлы
+backend/.env
+backend/audioinsight-*.json
+backend/results/
+backend/temp_uploads/
