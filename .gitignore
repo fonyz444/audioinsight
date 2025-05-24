@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.env
+*.env
+*.sqlite3
+*.db
+# FastAPI/uvicorn
+*.log
+
+# Node/React
+node_modules/
+dist/
+build/
+.env.local
+.env.development
+.env.production
+
+# AudioInsight
+backend/audioinsight-*.json
+backend/results/
+backend/temp_uploads/
