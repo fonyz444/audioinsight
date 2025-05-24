@@ -47,64 +47,105 @@ class AnalysisWorker:
             raise Exception(f"Ошибка анализа с Claude: {str(e)}")
     
     async def analyze_content(self, transcription: str) -> Dict[str, Any]:
-        return {
-            "topics": [
-                {"topic": "UI Design Review", "summary": "Обсуждение финальных правок UI", "duration_estimate": "15 мин"},
-                {"topic": "API Development", "summary": "Прогресс по интеграции API", "duration_estimate": "12 мин"},
-                {"topic": "Testing Strategy", "summary": "План тестирования", "duration_estimate": "10 мин"},
-                {"topic": "Release Planning", "summary": "Планирование релиза", "duration_estimate": "8 мин"}
-            ],
-            "decisions": [
-                {"decision": "Финализировать UI до 20 июня", "context": "Обсуждение с командой", "impact": "Своевременный релиз"},
-                {"decision": "Провести интеграционное тестирование", "context": "API интеграция", "impact": "Повышение качества"}
-            ],
-            "meeting_type": "weekly_sync",
-            "effectiveness_score": 7.5
-        }
+        """
+        Анализирует содержание транскрипции
+        """
+        print("🔍 Воркер 2: Анализирую содержание для выявления тем и решений...")
+        
+        system_prompt = """Ты - эксперт по анализу деловых встреч. Анализируй транскрипцию встречи и выдели:
 
-    async def extract_tasks(self, content: str) -> List[Dict]:
-        """Извлекает задачи из контента"""
-        # MOCK: Возвращаем тестовые задачи
-        return [
-            {
-                "id": "1",
-                "task": "Подготовить презентацию по результатам исследования",
-                "assignee": "Sarah Johnson",
-                "deadline": "2025-06-20",
-                "priority": "high",
-                "status": "pending",
-                "context": "Важно для следующего этапа проекта"
-            },
-            {
-                "id": "2",
-                "task": "Провести тестирование новой функциональности",
-                "assignee": "Michael Wong",
-                "deadline": "2025-06-22",
-                "priority": "medium",
-                "status": "pending",
-                "context": "Необходимо для релиза"
-            },
-            {
-                "id": "3",
-                "task": "Обновить документацию API",
-                "assignee": "Alex Chen",
-                "deadline": "2025-06-25",
-                "priority": "high",
-                "status": "pending",
-                "context": "Критично для разработчиков"
+1. ТЕМЫ (topics) - основные темы обсуждения
+2. РЕШЕНИЯ (decisions) - принятые решения
+3. ТИП ВСТРЕЧИ (meeting_type) - тип встречи (standup, planning, review и т.д.)
+4. ОЦЕНКА ЭФФЕКТИВНОСТИ (effectiveness_score) - от 1 до 10
+
+Верни результат в формате JSON."""
+
+        try:
+            response = await self._call_claude(transcription, system_prompt)
+            
+            # Парсим JSON ответ
+            result = json.loads(response)
+            
+            return {
+                "topics": result.get("topics", []),
+                "decisions": result.get("decisions", []),
+                "meeting_type": result.get("meeting_type", "general"),
+                "effectiveness_score": result.get("effectiveness_score", 5)
             }
-        ]
+            
+        except Exception as e:
+            print(f"❌ Ошибка в analyze_content: {str(e)}")
+            return {
+                "topics": [],
+                "decisions": [],
+                "meeting_type": "error",
+                "effectiveness_score": 0
+            }
+
+    async def extract_tasks(self, transcription: str) -> List[Dict[str, Any]]:
+        """
+        Извлекает задачи и пункты действий
+        """
+        print("📋 Воркер 3: Извлекаю задачи и пункты действий...")
+        
+        system_prompt = """Ты - эксперт по планированию проектов. Найди в транскрипции встречи все задачи, пункты действий, поручения.
+Для каждой задачи укажи:
+- описание
+- ответственного
+- срок
+- приоритет (high/medium/low)
+
+Верни результат в формате JSON."""
+
+        try:
+            response = await self._call_claude(transcription, system_prompt)
+            
+            # Парсим JSON ответ
+            tasks = json.loads(response)
+            
+            return tasks
+            
+        except Exception as e:
+            print(f"❌ Ошибка в extract_tasks: {str(e)}")
+            return []
 
     async def generate_insights(self, transcription: str) -> Dict[str, Any]:
-        return {
-            "team_dynamics": "Команда работает слаженно, коммуникация эффективна.",
-            "process_recommendations": ["Проводить встречи раз в неделю", "Добавить больше времени на обсуждение тестирования"],
-            "risk_flags": [
-                "Potential delay in the API integration due to third-party service issues",
-                "Limited testing resources might affect quality assurance"
-            ],
-            "follow_up_suggestions": ["Проверить статус задач через 3 дня", "Подготовить отчет для стейкхолдеров"]
-        }
+        """
+        Генерирует инсайты и рекомендации
+        """
+        print("💡 Воркер 4: Генерирую инсайты, риски и оценку эффективности...")
+        
+        system_prompt = """Ты - консультант по эффективности деловых процессов. Проанализируй транскрипцию встречи и предоставь:
+
+1. ДИНАМИКА КОМАНДЫ (team_dynamics) - оценка взаимодействия участников
+2. РЕКОМЕНДАЦИИ ПО ПРОЦЕССУ (process_recommendations) - как улучшить процесс
+3. РИСКИ (risk_flags) - потенциальные проблемы
+4. ПРЕДЛОЖЕНИЯ ПО ДАЛЬНЕЙШИМ ДЕЙСТВИЯМ (follow_up_suggestions)
+
+Верни результат в формате JSON."""
+
+        try:
+            response = await self._call_claude(transcription, system_prompt)
+            
+            # Парсим JSON ответ
+            insights = json.loads(response)
+            
+            return {
+                "team_dynamics": insights.get("team_dynamics", ""),
+                "process_recommendations": insights.get("process_recommendations", []),
+                "risk_flags": insights.get("risk_flags", []),
+                "follow_up_suggestions": insights.get("follow_up_suggestions", [])
+            }
+            
+        except Exception as e:
+            print(f"❌ Ошибка в generate_insights: {str(e)}")
+            return {
+                "team_dynamics": "",
+                "process_recommendations": [],
+                "risk_flags": ["Ошибка анализа"],
+                "follow_up_suggestions": []
+            }
 
     async def analyze(self, transcription: str) -> Dict[str, Any]:
         """
