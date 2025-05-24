@@ -16,8 +16,19 @@ import {
 	Play,
 	Pause,
 } from 'lucide-react'
+import { MeetingHeader } from './components/MeetingHeader'
+import { EffectivenessCard } from './components/EffectivenessCard'
+import { RisksCard } from './components/RisksCard'
+import { ActionItemsCard } from './components/ActionItemsCard'
+import { KeyTopicsCard } from './components/KeyTopicsCard'
+import { TranscriptCard } from './components/TranscriptCard'
 
 // Типы для результатов анализа
+interface RiskObj {
+	description: string
+	impact: 'High' | 'Medium' | 'Low'
+}
+
 interface Task {
 	description: string
 	assignee?: string
@@ -51,7 +62,7 @@ interface AnalysisResults {
 	topics: Topic[]
 	insights: Insight[]
 	effectiveness_score: number
-	risks: string[]
+	risks: (string | RiskObj)[]
 	meeting_duration_estimate?: string
 	participant_count_estimate?: number
 }
@@ -65,6 +76,65 @@ interface AnalysisResults {
 // }
 
 const API_BASE_URL = 'http://localhost:8000'
+
+const demoMockData: Record<string, Partial<AnalysisResults>> = {
+	demo_standup: {
+		effectiveness_score: 7.5,
+		tasks: [
+			{ description: 'Finalize UI designs for the dashboard', assignee: 'Sarah Johnson', deadline: 'June 20, 2025', priority: 'High' },
+			{ description: 'Set up integration tests for the API', assignee: 'Michael Wong', deadline: 'June 22, 2025', priority: 'Medium' },
+			{ description: 'Prepare demo for stakeholder meeting', assignee: 'Alex Chen', deadline: 'June 25, 2025', priority: 'High' },
+		],
+		risks: [
+			{ description: 'Potential delay in the API integration due to third-party service issues', impact: 'High' as const },
+			{ description: 'Limited testing resources might affect quality assurance', impact: 'Medium' as const },
+		] as (string | { description: string; impact: 'High' | 'Medium' | 'Low' })[],
+		topics: [
+			{ topic: 'UI Design Review', duration_estimate: '15 mins', summary: 'Discussed final UI tweaks and feedback.' },
+			{ topic: 'API Development', duration_estimate: '12 mins', summary: 'Reviewed API progress and blockers.' },
+			{ topic: 'Testing Strategy', duration_estimate: '10 mins', summary: 'Outlined QA plan and responsibilities.' },
+			{ topic: 'Release Planning', duration_estimate: '8 mins', summary: 'Set tentative release dates.' },
+		],
+		analysis_timestamp: new Date().toISOString(),
+		participant_count_estimate: 4,
+		meeting_duration_estimate: '45 minutes',
+	},
+	demo_client: {
+		effectiveness_score: 8.2,
+		tasks: [
+			{ description: 'Send updated proposal to client', assignee: 'Olga Petrova', deadline: 'June 18, 2025', priority: 'High' },
+			{ description: 'Schedule follow-up call', assignee: 'Ivan Smirnov', deadline: 'June 19, 2025', priority: 'Medium' },
+		],
+		risks: [
+			{ description: 'Client budget constraints may impact scope', impact: 'High' as const },
+		] as (string | { description: string; impact: 'High' | 'Medium' | 'Low' })[],
+		topics: [
+			{ topic: 'Requirements Discussion', duration_estimate: '20 mins', summary: 'Clarified client needs.' },
+			{ topic: 'Timeline Alignment', duration_estimate: '10 mins', summary: 'Agreed on key milestones.' },
+		],
+		analysis_timestamp: new Date().toISOString(),
+		participant_count_estimate: 3,
+		meeting_duration_estimate: '35 minutes',
+	},
+	demo_planning: {
+		effectiveness_score: 6.8,
+		tasks: [
+			{ description: 'Break down sprint stories', assignee: 'Dmitry Ivanov', deadline: 'June 21, 2025', priority: 'Medium' },
+			{ description: 'Assign tasks to team members', assignee: 'Elena Volkova', deadline: 'June 21, 2025', priority: 'Low' },
+		],
+		risks: [
+			{ description: 'Unclear requirements for some stories', impact: 'Medium' as const },
+			{ description: 'Resource availability during sprint', impact: 'Low' as const },
+		] as (string | { description: string; impact: 'High' | 'Medium' | 'Low' })[],
+		topics: [
+			{ topic: 'Sprint Goals', duration_estimate: '10 mins', summary: 'Defined main objectives.' },
+			{ topic: 'Task Assignment', duration_estimate: '15 mins', summary: 'Distributed work among team.' },
+		],
+		analysis_timestamp: new Date().toISOString(),
+		participant_count_estimate: 5,
+		meeting_duration_estimate: '40 minutes',
+	},
+}
 
 function App() {
 	const [file, setFile] = useState<File | null>(null)
@@ -157,6 +227,30 @@ function App() {
 		try {
 			setIsAnalyzing(true)
 			toast.loading(`Загружаю демо-файл: ${demoFile.name}...`)
+
+			// Мок-ответ для демо
+			const demoId = demoFile.filename.split('.')[0]
+			const mock = demoMockData[demoId]
+			if (mock) {
+				setTimeout(() => {
+					setResults({
+						transcription: `Demo transcript for ${demoFile.name}.\nSarah: Good morning everyone, let's start our daily standup...`,
+						analysis_timestamp: mock.analysis_timestamp || new Date().toISOString(),
+						tasks: mock.tasks || [],
+						decisions: [],
+						topics: mock.topics || [],
+						insights: [],
+						effectiveness_score: mock.effectiveness_score ?? 0,
+						risks: mock.risks || [],
+						meeting_duration_estimate: mock.meeting_duration_estimate,
+						participant_count_estimate: mock.participant_count_estimate,
+					})
+					setIsAnalyzing(false)
+					toast.dismiss()
+					toast.success('Анализ демо-файла завершен!')
+				}, 1000)
+				return
+			}
 
 			// The /api/demo/{demo_id}/analyze endpoint directly starts processing
 			const response = await fetch(
@@ -506,41 +600,41 @@ function App() {
 						</h2>
 
 						{/* Drag & Drop область */}
-						<div
-							className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
-								isDragOver
-									? 'border-purple-400 bg-purple-400/20'
-									: 'border-gray-400 hover:border-purple-400 hover:bg-purple-400/10'
-							}`}
-							onDragOver={handleDragOver}
-							onDragLeave={handleDragLeave}
-							onDrop={handleDrop}
-						>
-							<FileAudio className='mx-auto mb-4 text-gray-400' size={48} />
-							<p className='text-lg text-gray-300 mb-4'>
-								Перетащите аудио или видео файл сюда
-							</p>
-							<p className='text-sm text-gray-400 mb-6'>
-								Поддерживаемые форматы: MP3, MP4, WAV, M4A, OGG, FLAC, WEBM и
-								другие
-							</p>
-
-							<button
-								onClick={() => fileInputRef.current?.click()}
-								className='btn-primary'
-								disabled={isAnalyzing}
+						{!file && (
+							<div
+								className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
+									isDragOver
+										? 'border-purple-400 bg-purple-400/20'
+										: 'border-gray-400 hover:border-purple-400 hover:bg-purple-400/10'
+								}`}
+								onDragOver={handleDragOver}
+								onDragLeave={handleDragLeave}
+								onDrop={handleDrop}
 							>
-								Выбрать файл
-							</button>
-
-							<input
-								ref={fileInputRef}
-								type='file'
-								accept='audio/*,video/*'
-								onChange={handleFileInputChange}
-								className='hidden'
-							/>
-						</div>
+								<FileAudio className='mx-auto mb-4 text-gray-400' size={48} />
+								<p className='text-lg text-gray-300 mb-4'>
+									Перетащите аудио или видео файл сюда
+								</p>
+								<p className='text-sm text-gray-400 mb-6'>
+									Поддерживаемые форматы: MP3, MP4, WAV, M4A, OGG, FLAC, WEBM и
+									другие
+								</p>
+								<button
+									onClick={() => fileInputRef.current?.click()}
+									className='btn-primary'
+									disabled={isAnalyzing}
+								>
+									Выбрать файл
+								</button>
+								<input
+									ref={fileInputRef}
+									type='file'
+									accept='audio/*,video/*'
+									onChange={handleFileInputChange}
+									className='hidden'
+								/>
+							</div>
+						)}
 
 						{/* Выбранный файл */}
 						{file && (
@@ -638,350 +732,59 @@ function App() {
 				{/* Результаты анализа */}
 				{results && (
 					<div className='max-w-6xl mx-auto space-y-6 animate-fade-in'>
-						{/* Заголовок результатов */}
-						<div className='text-center mb-8'>
-							<CheckCircle className='mx-auto mb-4 text-green-400' size={48} />
-							<h2 className='text-3xl font-bold text-white mb-2'>
-								Анализ завершен
-							</h2>
-							<p className='text-gray-300'>
-								Встреча проанализирована{' '}
-								{new Date(results.analysis_timestamp).toLocaleString('ru-RU')}
-							</p>
+						<MeetingHeader
+							title='Product Team Weekly Sync'
+							date={new Date(results.analysis_timestamp).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+							duration={results.meeting_duration_estimate || '—'}
+							participants={results.participant_count_estimate || 4}
+							onExport={downloadTextReport}
+						/>
+						<div className='grid md:grid-cols-2 gap-6 mb-6'>
+							<EffectivenessCard
+								score={results.effectiveness_score}
+								duration={results.meeting_duration_estimate}
+								participants={results.participant_count_estimate}
+							/>
+							<RisksCard
+								risks={Array.isArray(results.risks)
+									? results.risks.map((risk: any) =>
+											typeof risk === 'string'
+												? { description: risk, impact: 'Medium' as const }
+												: {
+													description: risk.description,
+													impact:
+														risk.impact === 'High' || risk.impact === 'Low'
+															? risk.impact
+															: 'Medium',
+												}
+									)
+									: []}
+							/>
 						</div>
-
-						{/* Оценка эффективности */}
-						<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-							<div className='text-center'>
-								<h3 className='text-xl font-bold text-white mb-4 flex items-center justify-center'>
-									<Target className='mr-2' />
-									Оценка эффективности встречи
-								</h3>
-								<div className='text-6xl font-bold mb-2 text-purple-400'>
-									{typeof results?.effectiveness_score === 'number' ? results.effectiveness_score.toFixed(1) : '—'}/10
-								</div>
-								<div
-									className={`text-xl font-medium ${
-										formatScore(results.effectiveness_score).color
-									}`}
-								>
-									{formatScore(results.effectiveness_score).text}
-								</div>
-
-								{/* Дополнительная информация */}
-								<div className='flex justify-center space-x-8 mt-6 text-gray-300'>
-									{results.meeting_duration_estimate && (
-										<div className='flex items-center'>
-											<Clock className='mr-2' size={16} />
-											<span>{results.meeting_duration_estimate}</span>
-										</div>
-									)}
-									{results.participant_count_estimate && (
-										<div className='flex items-center'>
-											<Users className='mr-2' size={16} />
-											<span>
-												~{results.participant_count_estimate} участников
-											</span>
-										</div>
-									)}
-								</div>
-							</div>
+						<div className='grid md:grid-cols-2 gap-6 mb-6'>
+							<ActionItemsCard
+								items={Array.isArray(results.tasks)
+									? results.tasks.map(task => ({
+										...task,
+										priority:
+											task.priority === 'High' || task.priority === 'Low'
+												? task.priority
+												: 'Medium',
+									}))
+									: []}
+							/>
+							<KeyTopicsCard
+								topics={Array.isArray(results.topics) ? results.topics.map(topic => ({
+									topic: topic.topic,
+									duration: topic.duration_estimate || '—',
+									percent: 25 // TODO: вычислять процент по длительности
+								})) : []}
+							/>
 						</div>
-
-						{/* Сетка результатов */}
-						<div className='grid lg:grid-cols-2 gap-6'>
-							{/* Ключевые решения */}
-							{Array.isArray(results.decisions) && results.decisions.length > 0 && (
-								<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-									<div className='flex items-center justify-between mb-4'>
-										<h3 className='text-xl font-bold text-white flex items-center'>
-											<CheckCircle className='mr-2 text-green-400' />
-											Ключевые решения
-										</h3>
-										<button
-											onClick={() =>
-												copyToClipboard(
-													results.decisions
-														.map((d, i) => `${i + 1}. ${d.decision}`)
-														.join('\n'),
-													'Решения'
-												)
-											}
-											className='p-2 hover:bg-white/20 rounded-lg transition-colors'
-										>
-											<Copy className='text-gray-400' size={16} />
-										</button>
-									</div>
-									<div className='space-y-3'>
-										{results.decisions.map((decision, index) => (
-											<div key={index} className='p-3 bg-white/10 rounded-lg'>
-												<p className='text-white font-medium'>
-													{decision.decision}
-												</p>
-												{decision.context && (
-													<p className='text-gray-400 text-sm mt-1'>
-														Контекст: {decision.context}
-													</p>
-												)}
-												{decision.impact && (
-													<p className='text-blue-300 text-sm mt-1'>
-														Влияние: {decision.impact}
-													</p>
-												)}
-											</div>
-										))}
-									</div>
-								</div>
-							)}
-
-							{/* Планы действий */}
-							{Array.isArray(results.tasks) && results.tasks.length > 0 && (
-								<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-									<div className='flex items-center justify-between mb-4'>
-										<h3 className='text-xl font-bold text-white flex items-center'>
-											<Target className='mr-2 text-blue-400' />
-											Планы действий
-										</h3>
-										<button
-											onClick={() =>
-												copyToClipboard(
-													results.tasks
-														.map(
-															(t, i) =>
-																`${i + 1}. ${t.description}${
-																	t.assignee ? ` (${t.assignee})` : ''
-																}${t.deadline ? ` - до ${t.deadline}` : ''}`
-														)
-														.join('\n'),
-													'Задачи'
-												)
-											}
-											className='p-2 hover:bg-white/20 rounded-lg transition-colors'
-										>
-											<Copy className='text-gray-400' size={16} />
-										</button>
-									</div>
-									<div className='space-y-3'>
-										{results.tasks.map((task, index) => (
-											<div key={index} className='p-3 bg-white/10 rounded-lg'>
-												<p className='text-white font-medium'>
-													{task.description}
-												</p>
-												<div className='flex justify-between items-center mt-2 text-sm'>
-													<span className='text-gray-400'>
-														{task.assignee && `Ответственный: ${task.assignee}`}
-													</span>
-													<div className='flex space-x-2'>
-														{task.deadline && (
-															<span className='text-orange-300'>
-																до {task.deadline}
-															</span>
-														)}
-														{task.priority && (
-															<span
-																className={`px-2 py-1 rounded text-xs ${
-																	task.priority === 'high'
-																		? 'bg-red-500'
-																		: task.priority === 'medium'
-																		? 'bg-yellow-500'
-																		: 'bg-green-500'
-																}`}
-															>
-																{task.priority}
-															</span>
-														)}
-													</div>
-												</div>
-											</div>
-										))}
-									</div>
-								</div>
-							)}
-
-							{/* Обсуждаемые темы */}
-							{Array.isArray(results.topics) && results.topics.length > 0 && (
-								<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-									<div className='flex items-center justify-between mb-4'>
-										<h3 className='text-xl font-bold text-white flex items-center'>
-											<FileText className='mr-2 text-purple-400' />
-											Обсуждаемые темы
-										</h3>
-										<button
-											onClick={() =>
-												copyToClipboard(
-													results.topics
-														.map(
-															(t, i) =>
-																`${i + 1}. ${t.topic}${
-																	t.summary ? `: ${t.summary}` : ''
-																}`
-														)
-														.join('\n'),
-													'Темы'
-												)
-											}
-											className='p-2 hover:bg-white/20 rounded-lg transition-colors'
-										>
-											<Copy className='text-gray-400' size={16} />
-										</button>
-									</div>
-									<div className='space-y-3'>
-										{results.topics.map((topic, index) => (
-											<div key={index} className='p-3 bg-white/10 rounded-lg'>
-												<p className='text-white font-medium'>{topic.topic}</p>
-												{topic.summary && (
-													<p className='text-gray-400 text-sm mt-1'>
-														{topic.summary}
-													</p>
-												)}
-												{topic.duration_estimate && (
-													<p className='text-blue-300 text-xs mt-1'>
-														Длительность: {topic.duration_estimate}
-													</p>
-												)}
-											</div>
-										))}
-									</div>
-								</div>
-							)}
-
-							{/* Инсайты и рекомендации */}
-							{Array.isArray(results.insights) && results.insights.length > 0 && (
-								<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-									<div className='flex items-center justify-between mb-4'>
-										<h3 className='text-xl font-bold text-white flex items-center'>
-											<Lightbulb className='mr-2 text-yellow-400' />
-											Инсайты и рекомендации
-										</h3>
-										<button
-											onClick={() =>
-												copyToClipboard(
-													results.insights
-														.map(
-															(i, idx) =>
-																`${idx + 1}. ${i.insight}${
-																	i.recommendation
-																		? `\nРекомендация: ${i.recommendation}`
-																		: ''
-																}`
-														)
-														.join('\n\n'),
-													'Инсайты'
-												)
-											}
-											className='p-2 hover:bg-white/20 rounded-lg transition-colors'
-										>
-											<Copy className='text-gray-400' size={16} />
-										</button>
-									</div>
-									<div className='space-y-3'>
-										{results.insights.map((insight, index) => (
-											<div key={index} className='p-3 bg-white/10 rounded-lg'>
-												<p className='text-white font-medium'>
-													{insight.insight}
-												</p>
-												{insight.recommendation && (
-													<p className='text-green-300 text-sm mt-1'>
-														Рекомендация: {insight.recommendation}
-													</p>
-												)}
-												{insight.category && (
-													<span className='inline-block mt-2 px-2 py-1 bg-blue-500/30 text-blue-300 text-xs rounded'>
-														{insight.category}
-													</span>
-												)}
-											</div>
-										))}
-									</div>
-								</div>
-							)}
-						</div>
-
-						{/* Потенциальные риски */}
-						{Array.isArray(results.risks) && results.risks.length > 0 && (
-							<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-								<div className='flex items-center justify-between mb-4'>
-									<h3 className='text-xl font-bold text-white flex items-center'>
-										<AlertTriangle className='mr-2 text-red-400' />
-										Потенциальные риски
-									</h3>
-									<button
-										onClick={() =>
-											copyToClipboard(
-												results.risks
-													.map((r, i) => `${i + 1}. ${r}`)
-													.join('\n'),
-												'Риски'
-											)
-										}
-										className='p-2 hover:bg-white/20 rounded-lg transition-colors'
-									>
-										<Copy className='text-gray-400' size={16} />
-									</button>
-								</div>
-								<div className='grid md:grid-cols-2 gap-3'>
-									{results.risks.map((risk, index) => (
-										<div
-											key={index}
-											className='p-3 bg-red-500/10 border border-red-500/30 rounded-lg'
-										>
-											<p className='text-red-300'>{risk}</p>
-										</div>
-									))}
-								</div>
-							</div>
-						)}
-
-						{/* Полная транскрипция */}
-						<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-							<div className='flex items-center justify-between mb-4'>
-								<h3 className='text-xl font-bold text-white flex items-center'>
-									<FileText className='mr-2' />
-									Полная транскрипция
-								</h3>
-								<button
-									onClick={() =>
-										copyToClipboard(results.transcription, 'Транскрипция')
-									}
-									className='p-2 hover:bg-white/20 rounded-lg transition-colors'
-								>
-									<Copy className='text-gray-400' size={16} />
-								</button>
-							</div>
-							<div className='bg-white/10 rounded-lg p-4 max-h-96 overflow-y-auto custom-scrollbar'>
-								<p className='text-gray-300 whitespace-pre-wrap leading-relaxed'>
-									{results.transcription}
-								</p>
-							</div>
-						</div>
-
-						{/* Кнопки скачивания */}
-						<div className='card p-6 bg-white/10 backdrop-blur-lg border-white/20'>
-							<h3 className='text-xl font-bold text-white mb-4 flex items-center'>
-								<Download className='mr-2' />
-								Экспорт результатов
-							</h3>
-							<div className='flex space-x-4'>
-								<button
-									onClick={downloadJSON}
-									className='btn-primary flex items-center'
-								>
-									<Download className='mr-2' size={16} />
-									Скачать JSON
-								</button>
-								<button
-									onClick={downloadTextReport}
-									className='btn-secondary flex items-center'
-								>
-									<FileText className='mr-2' size={16} />
-									Скачать отчет (TXT)
-								</button>
-							</div>
-							<p className='text-gray-400 text-sm mt-3'>
-								JSON содержит все структурированные данные. Текстовый отчет
-								удобен для печати или отправки по email.
-							</p>
-						</div>
+						<TranscriptCard
+							transcript={results.transcription}
+							onCopy={() => copyToClipboard(results.transcription, 'Транскрипция')}
+						/>
 					</div>
 				)}
 			</div>
