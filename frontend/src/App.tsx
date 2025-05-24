@@ -284,7 +284,7 @@ function App() {
 	const pollForResults = async (meetingId: string) => {
 		let attempts = 0
 		const maxAttempts = 30 // Poll for 5 minutes (30 attempts * 10 seconds)
-		const interval = 10000 // 10 seconds
+		const interval = 1000 // 1 second
 
 		while (attempts < maxAttempts) {
 			try {
@@ -506,41 +506,41 @@ function App() {
 						</h2>
 
 						{/* Drag & Drop область */}
-						<div
-							className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
-								isDragOver
-									? 'border-purple-400 bg-purple-400/20'
-									: 'border-gray-400 hover:border-purple-400 hover:bg-purple-400/10'
-							}`}
-							onDragOver={handleDragOver}
-							onDragLeave={handleDragLeave}
-							onDrop={handleDrop}
-						>
-							<FileAudio className='mx-auto mb-4 text-gray-400' size={48} />
-							<p className='text-lg text-gray-300 mb-4'>
-								Перетащите аудио или видео файл сюда
-							</p>
-							<p className='text-sm text-gray-400 mb-6'>
-								Поддерживаемые форматы: MP3, MP4, WAV, M4A, OGG, FLAC, WEBM и
-								другие
-							</p>
-
-							<button
-								onClick={() => fileInputRef.current?.click()}
-								className='btn-primary'
-								disabled={isAnalyzing}
+						{!file && (
+							<div
+								className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
+									isDragOver
+										? 'border-purple-400 bg-purple-400/20'
+										: 'border-gray-400 hover:border-purple-400 hover:bg-purple-400/10'
+								}`}
+								onDragOver={handleDragOver}
+								onDragLeave={handleDragLeave}
+								onDrop={handleDrop}
 							>
-								Выбрать файл
-							</button>
-
-							<input
-								ref={fileInputRef}
-								type='file'
-								accept='audio/*,video/*'
-								onChange={handleFileInputChange}
-								className='hidden'
-							/>
-						</div>
+								<FileAudio className='mx-auto mb-4 text-gray-400' size={48} />
+								<p className='text-lg text-gray-300 mb-4'>
+									Перетащите аудио или видео файл сюда
+								</p>
+								<p className='text-sm text-gray-400 mb-6'>
+									Поддерживаемые форматы: MP3, MP4, WAV, M4A, OGG, FLAC, WEBM и
+									другие
+								</p>
+								<button
+									onClick={() => fileInputRef.current?.click()}
+									className='btn-primary'
+									disabled={isAnalyzing}
+								>
+									Выбрать файл
+								</button>
+								<input
+									ref={fileInputRef}
+									type='file'
+									accept='audio/*,video/*'
+									onChange={handleFileInputChange}
+									className='hidden'
+								/>
+							</div>
+						)}
 
 						{/* Выбранный файл */}
 						{file && (
