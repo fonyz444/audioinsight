@@ -26,3 +26,6 @@ backend/.env
 backend/audioinsight-*.json
 backend/results/
 backend/temp_uploads/
+
+__pycache__/
+*.pyc
